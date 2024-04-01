@@ -2,8 +2,14 @@ package main
 
 import (
     "fmt"
+    "bufio"
+    "os"
+    "strconv"
+
     "week9/controllers"
     "week9/models"
+    _ "github.com/go-sql-driver/mysql"
+    
 )
 
 func main() {
@@ -14,17 +20,62 @@ func main() {
         "irvand9999@gmail.com",
         "ggha yggy gogy lmti",
     )
-	
-	//Ini bagian yang bisa dimodifikasi (line 20-22)
-    recipientEmail := "irvand9999@gmail.com"
-    subject := "Test Go Mail doang"
-    body := "Hello <b>Irvan</b> ini adalah sebuah test email dari Gomail"
+Loop: 
+    for{    
+        fmt.Print("Masukkan ID pengguna (0 untuk keluar): ")
+        var userID int
+        if userID==0 {
+            fmt.Println("Sampai Jumpa!")
+            os.Exit(0)
+        }
+        user, err := controllers.GetUserByID(userID)
+        if err != nil {
+            fmt.Println("Failed to get user data:", err)
+            continue Loop
+        }   
 
-    if err := controllers.SendEmail(config, recipientEmail, subject, body); err != nil {
-        fmt.Println("Gagal mengirim email:", err)
-        return
+        var status = true
+        for status {
+            fmt.Println("Pilih fungsi yang ingin dijalankan:")
+            fmt.Println("1. Penggunaan poin")
+            fmt.Println("2. Penambahan poin")
+            fmt.Println("3. LogOut")
+            fmt.Print("Masukkan nomor fungsi: ")
+
+            reader := bufio.NewReader(os.Stdin)
+            input, _ := reader.ReadString('\n')
+            input = input[:len(input)-1]
+
+            num, err := strconv.Atoi(input)
+            if err != nil {
+                fmt.Println("Input tidak valid:", err)
+                return
+            }
+
+            switch num {
+            case 1:
+                controllers.PenambahanPoin(config, user, 10)
+            case 2:
+                controllers.PenguranganPoin(config, user, 5)
+            case 3:
+                status = false
+            default:
+                fmt.Println("Fungsi tidak valid")
+            }
+        }
     }
-
-    fmt.Println("Email berhasil dikirim!")
 }
+	
+// 	//Ini bagian yang bisa dimodifikasi (line 20-22)
+//     recipientEmail := "irvand9999@gmail.com"
+//     subject := "Test Go Mail doang"
+//     body := "Hello <b>Irvan</b> ini adalah sebuah test email dari Gomail"
+
+//     if err := controllers.SendEmail(config, recipientEmail, subject, body); err != nil {
+//         fmt.Println("Gagal mengirim email:", err)
+//         return
+//     }
+
+//     fmt.Println("Email berhasil dikirim!")
+// }
 
