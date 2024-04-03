@@ -15,6 +15,7 @@ func RedisClient() {
 		DB:       0, // use default DB
 	})
 
+	// test if connection success
 	ping, err2 := client.Ping(context.Background()).Result()
 	if err2 != nil {
 		fmt.Println(err2.Error())
@@ -22,21 +23,20 @@ func RedisClient() {
 
 	fmt.Println(ping)
 
-	err := saveToken(client, "user1", "123")
+	// saving token
+	err := saveToken(client, "LINE", "1ab32")
 	if err != nil {
 		log.Fatalf("Error saving token: %v", err)
 	}
 	fmt.Println("Token saved successfully.")
 
-	// Example: retrieving a token
-	token, err := getToken(client, "user1")
+	// retrieving token
+	token, err := getToken(client, "LINE")
 	if err != nil {
 		log.Fatalf("Error retrieving token: %v", err)
 	}
 	fmt.Println("Token retrieved:", token)
 
-	// Example: sending a report to an external API (pseudo code)
-	// sendReportToWhatsApp(token, reportData)
 }
 
 // Function to save token to Redis
