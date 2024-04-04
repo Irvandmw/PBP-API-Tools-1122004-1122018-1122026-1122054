@@ -10,15 +10,6 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-func NewEmailConfig(host string, port int, senderEmail, senderPassword string) *models.EmailConfig {
-	return &models.EmailConfig{
-		Host:           host,
-		Port:           port,
-		SenderEmail:    senderEmail,
-		SenderPassword: senderPassword,
-	}
-}
-
 var db *sql.DB
 
 func InitializeDB(database *sql.DB) {
@@ -120,5 +111,3 @@ func PenguranganPoin(config *models.EmailConfig, w http.ResponseWriter, r *http.
 	return nil
 
 }
-
-
