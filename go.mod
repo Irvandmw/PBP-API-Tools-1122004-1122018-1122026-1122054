@@ -16,5 +16,10 @@ require (
 require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/redis/go-redis/v9 v9.5.1
+require filippo.io/edwards25519 v1.1.0 // indirect
+
+require (
+	github.com/go-sql-driver/mysql v1.8.1
+	github.com/gorilla/mux v1.8.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )
