@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	// testing redis\
+	controllers.SaveToken(controllers.Redis(), "email-config", controllers.NewEmailConfig("smtp.gmail.com", 587, "irvand9999@gmail.com", "ggha yggy gogy lmti"))
 
 	router := mux.NewRouter()
 	router.HandleFunc("/user/point/modify", controllers.ModifyPoint).Methods("POST")

@@ -7,6 +7,15 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
+func NewEmailConfig(host string, port int, senderEmail, senderPassword string) *models.EmailConfig {
+	return &models.EmailConfig{
+		Host:           host,
+		Port:           port,
+		SenderEmail:    senderEmail,
+		SenderPassword: senderPassword,
+	}
+}
+
 func SendEmail(config models.EmailConfig, recipientEmail string, subject string, body string) error {
 	email := gomail.NewMessage()
 	email.SetHeader("From", config.SenderEmail)
