@@ -51,9 +51,8 @@ func main() {
 	fmt.Println("Connected to port 8888")
 	log.Println("Connected to port 8888")
 	log.Fatal(http.ListenAndServe(":8888", router))
-}
 
-// branchWilliam
+	// branchWilliam
 	//Ini bagian yang bisa dimodifikasi (line 20-22)
 	recipientEmail := "if-22004@students.ithb.ac.id"
 	subject := "Test Go Mail doang"
