@@ -12,7 +12,11 @@ import (
 )
 
 func main() {
+	// CRON JOB
+	go controllers.NotifyMonthlyPointExpirationEmail()
+	go controllers.PointReset()
 
+	// REDIS
 	controllers.SaveToken(controllers.Redis(), "email-config", controllers.NewEmailConfig("smtp.gmail.com", 587, "irvand9999@gmail.com", "ggha yggy gogy lmti"))
 
 	router := mux.NewRouter()
@@ -22,10 +26,4 @@ func main() {
 	fmt.Println("Membership application listening at 22345")
 	log.Println("Membership application listening at 22345")
 	log.Fatal(http.ListenAndServe(":22345", router))
-
-	// SCHEDULING EMAIL GOCRON
-	// controllers.SendEmailByMinute(config, recipientEmail, "PESAN MENIT INI", "Ini pesan yang muncul setiap menit")
-	// controllers.SendDailyEmail(config, recipientEmail, "PESAN HARI INI", "Ini pesan yang muncul setiap hari")
-	// controllers.SendWeeklyEmail(config, recipientEmail, "PESAN MINGGU INI", "Ini pesan yang muncul setiap minggu")
-	// controllers.SendMonthlyEmail(config, recipientEmail, "PESAN BULAN INI", "Ini pesan yang muncul setiap bulan")
 }

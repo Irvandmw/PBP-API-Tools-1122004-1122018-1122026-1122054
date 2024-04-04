@@ -3,9 +3,14 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
+	"strconv"
+	"time"
 	"week9/models"
+
+	"github.com/go-co-op/gocron"
 )
 
 func GetUserByID(userID int) (*models.User, error) {
@@ -41,7 +46,7 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	amount := request.Amount
-	if amount <= 0 {
+	if amount == 0 {
 		sendErrorResponse(w, 400, "invalid point")
 		return
 	}
@@ -50,6 +55,7 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 	user, err := GetUserByID(request.UserID)
 	if err != nil {
 		sendErrorResponse(w, 400, "user not found")
+		return
 	}
 
 	user.Points += request.Amount
@@ -70,14 +76,43 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 		fmt.Print(err)
 	}
 
-	fmt.Print(emailConfig.Host)
-
 	if request.Amount > 0 {
 		go KirimPenambahanPoin(emailConfig, user, request.Amount)
 	} else {
 		go KirimPenguranganPoin(emailConfig, user, int(math.Abs(float64(request.Amount))))
 	}
 	sendSuccessResponse(w, "success")
+}
+func PointReset() {
+	localTime, err := time.LoadLocation("Asia/Jakarta")
+	if err != nil {
+		localTime = time.UTC
+	}
+
+	s := gocron.NewScheduler(localTime)
+
+	s.Every(1).Month().At("00:01").Do(func() {
+		db := connectDB()
+		defer db.Close()
+		_, err_update := db.Exec("UPDATE `user` SET `points`=0;")
+		if err_update != nil {
+			log.Fatal(err_update)
+		}
+		log.Print("===POINT RESET===")
+	})
+	s.StartBlocking()
+}
+
+func EndOfMonth() string {
+	date := time.Now()
+	output := date.AddDate(0, 1, -date.Day())
+	months := []string{"Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"}
+
+	day := strconv.Itoa(output.Day())
+	month := months[output.Month()-1]
+	year := strconv.Itoa(output.Year())
+
+	return day + " " + month + " " + year
 }
 
 func sendSuccessResponse(w http.ResponseWriter, message string) {
