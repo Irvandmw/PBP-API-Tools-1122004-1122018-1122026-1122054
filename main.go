@@ -32,7 +32,7 @@ func main() {
 		"irvand9999@gmail.com",
 		"ggha yggy gogy lmti",
 	)
-	
+
 	//END POINTS
 	router.HandleFunc("/user/tambahPoin", func(w http.ResponseWriter, r *http.Request) {
 		err := controllers.PenambahanPoin(config, w, r)
