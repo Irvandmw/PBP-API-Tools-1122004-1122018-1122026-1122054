@@ -8,7 +8,7 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-func SendMonthlyEmail(config *models.EmailConfig, recipientEmail string, subject string, body string) error {
+func SendMonthlyEmail(config models.EmailConfig, recipientEmail string, subject string, body string) error {
 
 	localTime, err := time.LoadLocation("Asia/Jakarta")
 	if err != nil {
@@ -28,7 +28,7 @@ func SendMonthlyEmail(config *models.EmailConfig, recipientEmail string, subject
 	return nil
 }
 
-func SendWeeklyEmail(config *models.EmailConfig, recipientEmail string, subject string, body string) error {
+func SendWeeklyEmail(config models.EmailConfig, recipientEmail string, subject string, body string) error {
 
 	localTime, err := time.LoadLocation("Asia/Jakarta")
 	if err != nil {
@@ -48,7 +48,7 @@ func SendWeeklyEmail(config *models.EmailConfig, recipientEmail string, subject 
 	return nil
 }
 
-func SendDailyEmail(config *models.EmailConfig, recipientEmail string, subject string, body string) error {
+func SendDailyEmail(config models.EmailConfig, recipientEmail string, subject string, body string) error {
 
 	localTime, err := time.LoadLocation("Asia/Jakarta")
 	if err != nil {
@@ -68,7 +68,7 @@ func SendDailyEmail(config *models.EmailConfig, recipientEmail string, subject s
 	return nil
 }
 
-func SendEmailByMinute(config *models.EmailConfig, recipientEmail string, subject string, body string) error {
+func SendEmailByMinute(config models.EmailConfig, recipientEmail string, subject string, body string) error {
 
 	localTime, err := time.LoadLocation("Asia/Jakarta")
 	if err != nil {

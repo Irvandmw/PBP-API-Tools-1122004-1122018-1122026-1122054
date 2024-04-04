@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"net/http"
 	"week9/models"
@@ -34,6 +35,16 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(w, 400, "empty request body")
 		return
 	}
+	id_user := request.UserID
+	if id_user <= 0 {
+		sendErrorResponse(w, 400, "invalid id_user")
+		return
+	}
+	amount := request.Amount
+	if amount <= 0 {
+		sendErrorResponse(w, 400, "invalid point")
+		return
+	}
 
 	// Update data ke db
 	user, err := GetUserByID(request.UserID)
@@ -48,17 +59,23 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 		sendErrorResponse(w, 500, "internal server error")
 	}
 
-	config := NewEmailConfig(
-		"smtp.gmail.com",
-		587,
-		"irvand9999@gmail.com",
-		"ggha yggy gogy lmti",
-	)
+	query_insert := "INSERT INTO `point_log`(`timestamp`, `id_user`, `point`) VALUE (now(), ?, ?);"
+	_, err_insert_log := db.Exec(query_insert, user.ID, request.Amount)
+	if err_insert_log != nil {
+		sendErrorResponse(w, 500, "unable to print point log")
+	}
+
+	var emailConfig models.EmailConfig
+	if err := GetToken(Redis(), "email-config", &emailConfig); err != nil {
+		fmt.Print(err)
+	}
+
+	fmt.Print(emailConfig.Host)
 
 	if request.Amount > 0 {
-		PenambahanPoin(config, user, request.Amount)
+		go KirimPenambahanPoin(emailConfig, user, request.Amount)
 	} else {
-		PenguranganPoin(config, user, int(math.Abs(float64(request.Amount))))
+		go KirimPenguranganPoin(emailConfig, user, int(math.Abs(float64(request.Amount))))
 	}
 	sendSuccessResponse(w, "success")
 }
