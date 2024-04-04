@@ -59,6 +59,10 @@ func ModifyPoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user.Points += request.Amount
+	if user.Points < 0 {
+		sendErrorResponse(w, 400, "insufficient point")
+		return
+	}
 	query := "UPDATE `users` SET `points`=? WHERE `id`=?;"
 	_, err_update := db.Exec(query, user.Points, user.ID)
 	if err_update != nil {
