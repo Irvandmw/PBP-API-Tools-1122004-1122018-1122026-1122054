@@ -16,6 +16,21 @@ func InitializeDB(database *sql.DB) {
 	db = database
 }
 
+func SendEmail(config *models.EmailConfig, recipientEmail string, subject string, body string) error {
+	email := gomail.NewMessage()
+	email.SetHeader("From", config.SenderEmail)
+	email.SetHeader("To", recipientEmail)
+	email.SetHeader("Subject", subject)
+	email.SetBody("text/html", body)
+	dialer := gomail.NewDialer(config.Host, config.Port, config.SenderEmail, config.SenderPassword)
+
+	if err := dialer.DialAndSend(email); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func PenambahanPoin(config *models.EmailConfig, w http.ResponseWriter, r *http.Request) error {
 	db := connect()
 	defer db.Close()
