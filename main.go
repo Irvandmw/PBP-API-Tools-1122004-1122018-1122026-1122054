@@ -16,7 +16,7 @@ func main() {
 	)
 
 	//Ini bagian yang bisa dimodifikasi (line 20-22)
-	recipientEmail := "irvand9999@gmail.com"
+	recipientEmail := "if-22004@students.ithb.ac.id"
 	subject := "Test Go Mail doang"
 	body := "Hello <b>Irvan</b> ini adalah sebuah test email dari Gomail"
 
@@ -28,5 +28,11 @@ func main() {
 	fmt.Println("Email berhasil dikirim!")
 
 	// testing redis
-	controllers.RedisClient()
+	// controllers.RedisClient()
+
+	// SCHEDULING EMAIL GOCRON
+	controllers.SendEmailByMinute(config, recipientEmail, "PESAN MENIT INI", "Ini pesan yang muncul setiap menit")
+	controllers.SendDailyEmail(config, recipientEmail, "PESAN HARI INI", "Ini pesan yang muncul setiap hari")
+	controllers.SendWeeklyEmail(config, recipientEmail, "PESAN MINGGU INI", "Ini pesan yang muncul setiap minggu")
+	controllers.SendMonthlyEmail(config, recipientEmail, "PESAN BULAN INI", "Ini pesan yang muncul setiap bulan")
 }
