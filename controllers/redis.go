@@ -2,59 +2,41 @@ package controllers
 
 import (
 	"context"
-	"fmt"
-	"log"
+	"encoding/json"
 
 	"github.com/redis/go-redis/v9"
 )
 
-func RedisClient() {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0, // use default DB
-	})
+var client *redis.Client
 
-	// test if connection success
-	ping, err2 := client.Ping(context.Background()).Result()
-	if err2 != nil {
-		fmt.Println(err2.Error())
+func Redis() *redis.Client {
+	if client == nil {
+		client = redis.NewClient(&redis.Options{
+			Addr:     "localhost:6379",
+			Password: "",
+			DB:       0, // use default DB
+		})
 	}
 
-	fmt.Println(ping)
-
-	// saving token
-	err := saveToken(client, "LINE", "1ab32")
-	if err != nil {
-		log.Fatalf("Error saving token: %v", err)
-	}
-	fmt.Println("Token saved successfully.")
-
-	// retrieving token
-	token, err := getToken(client, "LINE")
-	if err != nil {
-		log.Fatalf("Error retrieving token: %v", err)
-	}
-	fmt.Println("Token retrieved:", token)
-
+	return client
 }
 
 // Function to save token to Redis
-func saveToken(client *redis.Client, userID, token string) error {
+func SaveToken(client *redis.Client, key string, value interface{}) error {
 	ctx := context.Background()
-	err := client.Set(ctx, userID+":token", token, 0).Err()
+	p, err := json.Marshal(value)
 	if err != nil {
 		return err
 	}
-	return nil
+	return client.Set(ctx, key, p, 0).Err()
 }
 
 // Function to retrieve token from Redis
-func getToken(client *redis.Client, userID string) (string, error) {
+func GetToken(client *redis.Client, key string, dest interface{}) error {
 	ctx := context.Background()
-	token, err := client.Get(ctx, userID+":token").Result()
+	p, err := client.Get(ctx, key).Bytes()
 	if err != nil {
-		return "", err
+		return err
 	}
-	return token, nil
+	return json.Unmarshal(p, dest)
 }
